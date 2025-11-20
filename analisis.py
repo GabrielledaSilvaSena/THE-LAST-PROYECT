@@ -1,10 +1,14 @@
 """
 PROYECTO FINAL - ANALISIS DE PELICULAS TMDB
-Autor: [Tu Nombre]
-Fecha: Noviembre 2024
+
 """
 
+# ===================================================================
+# IMPORTS
+# ===================================================================
 import pandas as pd
+import matplotlib.pyplot as plt
+import os
 
 print("PROYECTO FINAL - ANALISIS DE PELICULAS TMDB")
 print("=" * 60)
@@ -152,6 +156,9 @@ df_clean.loc[(df_clean['runtime'] >= 90) & (df_clean['runtime'] < 120), 'duratio
 df_clean.loc[(df_clean['runtime'] >= 120) & (df_clean['runtime'] < 150), 'duration_cat'] = 'Larga'
 df_clean.loc[df_clean['runtime'] >= 150, 'duration_cat'] = 'Muy Larga'
 
+# Crear columna de decada (usada en analisis posteriores)
+df_clean['decade'] = (df_clean['year'] // 10) * 10
+
 print("Categorias creadas correctamente")
 
 
@@ -164,7 +171,7 @@ print("DATASET FINAL")
 print("=" * 60)
 
 print(f"\nTotal de filas: {df_clean.shape[0]}")
-print(f"Total de columnas: {df_clean.shape[1]}")
+print(f"\nTotal de columnas: {df_clean.shape[1]}")
 
 # Nuevas columnas creadas
 print("\nColumnas creadas en el analisis:")
@@ -176,6 +183,7 @@ print("- roi")
 print("- budget_cat")
 print("- rating_cat")
 print("- duration_cat")
+print("- decade")
 
 # Mostrar muestra
 print("\nMuestra de datos procesados:")
@@ -195,28 +203,20 @@ df_clean.to_csv('data/processed/dataset_final.csv', index=False)
 print("\nDataset guardado en: data/processed/dataset_final.csv")
 
 print("\n" + "=" * 60)
-print("PROCESO COMPLETADO")
+print("LIMPIEZA Y TRANSFORMACION COMPLETADA")
 print("=" * 60)
 
-"""
-BLOQUE 7 - ANALISIS ESTADISTICO
-Agregar este codigo despues del Bloque 6 en tu archivo analisis.py
-"""
 
-import pandas as pd
-
-# Cargar el dataset limpio
-df_clean = pd.read_csv('data/processed/dataset_final.csv')
+# ===================================================================
+# BLOQUE 7: ANALISIS ESTADISTICO
+# ===================================================================
 
 print("\n" + "=" * 60)
 print("ANALISIS ESTADISTICO")
 print("=" * 60)
 
 
-# ===================================================================
 # 1. ANALISIS DESCRIPTIVO GENERAL
-# ===================================================================
-
 print("\n1. ESTADISTICAS DESCRIPTIVAS GENERALES")
 print("-" * 60)
 
@@ -230,10 +230,7 @@ otras_columnas = ['vote_average', 'vote_count', 'runtime', 'popularity']
 print(df_clean[otras_columnas].describe())
 
 
-# ===================================================================
 # 2. ANALISIS POR CATEGORIA DE PRESUPUESTO
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("2. ANALISIS POR CATEGORIA DE PRESUPUESTO")
 print("-" * 60)
@@ -248,10 +245,7 @@ agrupado_presupuesto = df_clean.groupby('budget_cat')[['budget', 'revenue', 'pro
 print(agrupado_presupuesto)
 
 
-# ===================================================================
 # 3. ANALISIS POR CATEGORIA DE RATING
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("3. ANALISIS POR CATEGORIA DE RATING")
 print("-" * 60)
@@ -266,17 +260,13 @@ agrupado_rating = df_clean.groupby('rating_cat')[['budget', 'revenue', 'profit',
 print(agrupado_rating)
 
 
-# ===================================================================
 # 4. ANALISIS TEMPORAL (POR AÑO)
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("4. ANALISIS TEMPORAL")
 print("-" * 60)
 
-# Peliculas por año
+# Peliculas por decada
 print("\nPeliculas por decada:")
-df_clean['decade'] = (df_clean['year'] // 10) * 10
 peliculas_por_decada = df_clean.groupby('decade').size()
 print(peliculas_por_decada)
 
@@ -286,10 +276,7 @@ promedios_decada = df_clean.groupby('decade')[['budget', 'revenue', 'vote_averag
 print(promedios_decada)
 
 
-# ===================================================================
 # 5. CORRELACIONES
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("5. ANALISIS DE CORRELACIONES")
 print("-" * 60)
@@ -307,10 +294,7 @@ corr_revenue = correlaciones['revenue'].sort_values(ascending=False)
 print(corr_revenue)
 
 
-# ===================================================================
 # 6. TOP 10 PELICULAS
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("6. RANKINGS - TOP 10")
 print("-" * 60)
@@ -334,10 +318,7 @@ top_rating = df_min_votos.nlargest(10, 'vote_average')[['title_x', 'year', 'vote
 print(top_rating)
 
 
-# ===================================================================
 # 7. ANALISIS DE DURACION
-# ===================================================================
-
 print("\n" + "-" * 60)
 print("7. ANALISIS DE DURACION")
 print("-" * 60)
@@ -350,10 +331,7 @@ rating_por_duracion = df_clean.groupby('duration_cat')['vote_average'].mean().so
 print(rating_por_duracion)
 
 
-# ===================================================================
 # 8. RESUMEN DE HALLAZGOS
-# ===================================================================
-
 print("\n" + "=" * 60)
 print("RESUMEN DE HALLAZGOS ESTADISTICOS")
 print("=" * 60)
@@ -376,10 +354,7 @@ corr_sin_revenue = corr_revenue.drop('revenue')
 print(f"- {corr_sin_revenue.index[0]}: {corr_sin_revenue.iloc[0]:.3f}")
 
 
-# ===================================================================
-# GUARDAR RESULTADOS
-# ===================================================================
-
+# GUARDAR RESULTADOS ESTADISTICOS
 print("\n" + "=" * 60)
 print("GUARDANDO RESULTADOS ESTADISTICOS")
 print("=" * 60)
@@ -412,31 +387,21 @@ print("\n" + "=" * 60)
 print("ANALISIS ESTADISTICO COMPLETADO")
 print("=" * 60)
 
-"""
-BLOQUE 8 - VISUALIZACIONES
-Agregar este codigo despues del Bloque 7 en tu archivo analisis.py
-"""
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Cargar el dataset limpio
-df_clean = pd.read_csv('data/processed/dataset_final.csv')
+# ===================================================================
+# BLOQUE 8: VISUALIZACIONES
+# ===================================================================
 
 print("\n" + "=" * 60)
 print("CREANDO VISUALIZACIONES")
 print("=" * 60)
 
 # Crear carpeta para guardar graficos
-import os
 if not os.path.exists('reports'):
     os.makedirs('reports')
 
 
-# ===================================================================
 # GRAFICO 1: PELICULAS POR CATEGORIA DE PRESUPUESTO
-# ===================================================================
-
 print("\n1. Creando grafico de peliculas por categoria de presupuesto...")
 
 plt.figure(figsize=(10, 6))
@@ -459,10 +424,7 @@ print("   Guardado: grafico_1_presupuesto.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 2: PRESUPUESTO VS INGRESOS (DISPERSION)
-# ===================================================================
-
 print("2. Creando grafico de presupuesto vs ingresos...")
 
 plt.figure(figsize=(10, 6))
@@ -484,16 +446,12 @@ print("   Guardado: grafico_2_presupuesto_vs_ingresos.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 3: EVOLUCION TEMPORAL (PELICULAS POR DECADA)
-# ===================================================================
-
 print("3. Creando grafico de evolucion temporal...")
 
 plt.figure(figsize=(12, 6))
 
-# Contar peliculas por decada
-df_clean['decade'] = (df_clean['year'] // 10) * 10
+# Contar peliculas por decada (ya calculado en Bloque 5)
 peliculas_por_decada = df_clean.groupby('decade').size()
 
 # Grafico de lineas
@@ -510,10 +468,7 @@ print("   Guardado: grafico_3_evolucion_temporal.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 4: TOP 10 PELICULAS POR INGRESOS
-# ===================================================================
-
 print("4. Creando grafico de top 10 peliculas por ingresos...")
 
 plt.figure(figsize=(12, 8))
@@ -535,10 +490,7 @@ print("   Guardado: grafico_4_top_10_ingresos.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 5: DISTRIBUCION DE RATINGS
-# ===================================================================
-
 print("5. Creando grafico de distribucion de ratings...")
 
 plt.figure(figsize=(10, 6))
@@ -561,10 +513,7 @@ print("   Guardado: grafico_5_ratings.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 6: INGRESOS PROMEDIO POR CATEGORIA DE PRESUPUESTO
-# ===================================================================
-
 print("6. Creando grafico de ingresos promedio por categoria...")
 
 plt.figure(figsize=(10, 6))
@@ -587,10 +536,7 @@ print("   Guardado: grafico_6_ingresos_promedio.png")
 plt.close()
 
 
-# ===================================================================
 # GRAFICO 7: DURACION VS RATING
-# ===================================================================
-
 print("7. Creando grafico de duracion vs rating...")
 
 plt.figure(figsize=(10, 6))
@@ -612,10 +558,7 @@ print("   Guardado: grafico_7_duracion_vs_rating.png")
 plt.close()
 
 
-# ===================================================================
-# RESUMEN
-# ===================================================================
-
+# RESUMEN FINAL
 print("\n" + "=" * 60)
 print("VISUALIZACIONES COMPLETADAS")
 print("=" * 60)
@@ -628,4 +571,7 @@ print("5. grafico_5_ratings.png")
 print("6. grafico_6_ingresos_promedio.png")
 print("7. grafico_7_duracion_vs_rating.png")
 print("\nEstos graficos pueden ser usados en tu informe y dashboard.")
+
+print("\n" + "=" * 60)
+print("PROYECTO COMPLETADO EXITOSAMENTE")
 print("=" * 60)
