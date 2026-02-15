@@ -496,7 +496,7 @@ Los datos utilizados pertenecen a TMDB y están sujetos a sus términos de uso.
 ## Contacto
 
 Para preguntas o comentarios sobre este proyecto:
-- GitHub: [tu-usuario]
+- GitHub: [GabrielledaSilvaSena]
 - Email: [gabyssena@hotmail.es]
 
 
