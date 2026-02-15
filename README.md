@@ -497,9 +497,9 @@ Los datos utilizados pertenecen a TMDB y están sujetos a sus términos de uso.
 
 Para preguntas o comentarios sobre este proyecto:
 - GitHub: [tu-usuario]
-- Email: [tu-email]
-- LinkedIn: [tu-linkedin]
+- Email: [gabyssena@hotmail.es]
+
 
 ---
 
-*Última actualización: Diciembre 2024*
+*Última actualización: Febrero 2026*
